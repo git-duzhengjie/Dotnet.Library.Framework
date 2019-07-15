@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "E:\\.net core\\Dotnet.Core.Library.Framework\\Library.Framework.Core\\Library.Framework.Core.csproj": {}
+    "E:\\.net core\\Dotnet.Library.Framework\\Library.Framework.Core\\Library.Framework.Core.csproj": {}
   },
   "projects": {
-    "E:\\.net core\\Dotnet.Core.Library.Framework\\Library.Framework.Core\\Library.Framework.Core.csproj": {
+    "E:\\.net core\\Dotnet.Library.Framework\\Library.Framework.Core\\Library.Framework.Core.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\.net core\\Dotnet.Core.Library.Framework\\Library.Framework.Core\\Library.Framework.Core.csproj",
+        "projectUniqueName": "E:\\.net core\\Dotnet.Library.Framework\\Library.Framework.Core\\Library.Framework.Core.csproj",
         "projectName": "Library.Framework.Core",
-        "projectPath": "E:\\.net core\\Dotnet.Core.Library.Framework\\Library.Framework.Core\\Library.Framework.Core.csproj",
+        "projectPath": "E:\\.net core\\Dotnet.Library.Framework\\Library.Framework.Core\\Library.Framework.Core.csproj",
         "packagesPath": "C:\\Users\\duzhengjie\\.nuget\\packages\\",
-        "outputPath": "E:\\.net core\\Dotnet.Core.Library.Framework\\Library.Framework.Core\\obj\\",
+        "outputPath": "E:\\.net core\\Dotnet.Library.Framework\\Library.Framework.Core\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
@@ -42,6 +42,14 @@
       "frameworks": {
         "netstandard2.0": {
           "dependencies": {
+            "AutoMapper": {
+              "target": "Package",
+              "version": "[8.1.1, )"
+            },
+            "Dapper": {
+              "target": "Package",
+              "version": "[1.60.6, )"
+            },
             "NETStandard.Library": {
               "suppressParent": "All",
               "target": "Package",

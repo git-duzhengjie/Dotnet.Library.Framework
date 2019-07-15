@@ -11,6 +11,7 @@ namespace Library.Framework.Core.Utility
 {
     public class MqRpcHelper
     {
+        public delegate object Process(RpcDto message);
         public T CreateType<T>()
         {
             var type = typeof(T);
@@ -89,13 +90,14 @@ namespace Library.Framework.Core.Utility
             return result;
         }
 
-        public static void RegisterRpcServer(string name)
+        public static void RegisterRpcServer(string name, Process process)
         {
             RabbitMqHelper rabbitMqHelper = new RabbitMqHelper("amqp://192.168.137.2:5672/", "guest", "guest", 2);
             rabbitMqHelper.ReadMessage($"server:{name}", (ob, ea) =>
             {
                 var r = ea.Body.BytesToObject<RpcDto>();
-
+                var s = process(r);
+                rabbitMqHelper.SendMessage(r.Id,"","",s.ObjectToBytes());
             });
         }
 
