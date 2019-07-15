@@ -1,0 +1,62 @@
+{
+  "format": 1,
+  "restore": {
+    "E:\\.net core\\Dotnet.Core.Library.Framework\\Library.Framework.Web\\Library.Framework.Web.csproj": {}
+  },
+  "projects": {
+    "E:\\.net core\\Dotnet.Core.Library.Framework\\Library.Framework.Web\\Library.Framework.Web.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "E:\\.net core\\Dotnet.Core.Library.Framework\\Library.Framework.Web\\Library.Framework.Web.csproj",
+        "projectName": "Library.Framework.Web",
+        "projectPath": "E:\\.net core\\Dotnet.Core.Library.Framework\\Library.Framework.Web\\Library.Framework.Web.csproj",
+        "packagesPath": "C:\\Users\\duzhengjie\\.nuget\\packages\\",
+        "outputPath": "E:\\.net core\\Dotnet.Core.Library.Framework\\Library.Framework.Web\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\duzhengjie\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "netcoreapp3.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "http://nuget.i-cbao.com:8877": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "netcoreapp3.0": {
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "netcoreapp3.0": {
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": [
+            "Microsoft.AspNetCore.App",
+            "Microsoft.NETCore.App"
+          ]
+        }
+      }
+    }
+  }
+}
