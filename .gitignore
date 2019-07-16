@@ -8,3 +8,10 @@
 /Library.Framework.Core/obj/Debug/netstandard2.0
 /Library.Framework.Web/obj/Debug/netcoreapp3.0
 /.vs/Dotnet.Library.Framework/v16/Server/sqlite3
+/Library.Framework.Core/bin/Debug/netstandard2.0
+/Test.Client/bin/Debug/netcoreapp3.0
+/Test.Client/obj
+/Test.Contract/bin/Debug/netstandard2.0
+/Test.Contract/obj
+/Test.Server/bin/Debug/netcoreapp3.0
+/Test.Server/obj

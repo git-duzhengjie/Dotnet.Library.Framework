@@ -16,7 +16,6 @@ namespace Library.Framework.Core.Utility
         private static string Connection
         {
             get { return _connection; }
-            //set { _connection = value; }
         }
 
         /// 返回连接实例        

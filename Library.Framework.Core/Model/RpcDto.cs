@@ -1,5 +1,6 @@
 ﻿namespace Library.Framework.Core.Model
 {
+    [System.Serializable]
     public class RpcDto
     {
         /// <summary>

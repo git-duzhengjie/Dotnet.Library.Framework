@@ -12,7 +12,7 @@ namespace Library.Framework.Core.Utility
     public class MqRpcHelper
     {
         public delegate object Process(RpcDto message);
-        public T CreateType<T>()
+        public static T CreateType<T>()
         {
             var type = typeof(T);
             TypeBuilder typeBuilder = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName("sdfs"), AssemblyBuilderAccess.Run)
@@ -24,6 +24,8 @@ namespace Library.Framework.Core.Utility
             {
                 ParameterInfo[] parameter = m.GetParameters();
                 Type[] array = parameter.Select(p => p.ParameterType).ToArray();
+                if (m.ReturnType == typeof(void))
+                    throw new Exception("Rpc方法返回值不能为空！");
                 MethodBuilder mbIm = typeBuilder.DefineMethod(m.Name,
                     MethodAttributes.Public | MethodAttributes.HideBySig |
                     MethodAttributes.NewSlot | MethodAttributes.Virtual |
@@ -32,10 +34,13 @@ namespace Library.Framework.Core.Utility
                     array);
 
                 ILGenerator il = mbIm.GetILGenerator();
+
                 LocalBuilder local = il.DeclareLocal(typeof(object[]));
                 il.Emit(OpCodes.Ldc_I4, parameter.Length);
                 il.Emit(OpCodes.Newarr, typeof(object));
                 il.Emit(OpCodes.Stloc, local);
+                il.Emit(OpCodes.Ldstr, type.FullName);
+                il.Emit(OpCodes.Ldstr, m.Name);
                 for (int i = 0; i < parameter.Length; i++)
                 {
                     il.Emit(OpCodes.Ldloc, local);
@@ -47,12 +52,8 @@ namespace Library.Framework.Core.Utility
                     il.Emit(OpCodes.Stelem_Ref);
                 }
                 il.Emit(OpCodes.Ldloc, local);
-                il.Emit(OpCodes.Ldstr, type.Name);
-                il.Emit(OpCodes.Ldstr, m.Name);
-                //il.Emit(OpCodes.Ldtoken, m.ReturnType);
-                //il.Emit(OpCodes.Call, typeof(Type).GetMethod("GetTypeFromHandle", new Type[] { typeof(RuntimeTypeHandle) }));
-                il.Emit(OpCodes.Call, typeof(T).GetMethod("ReadMessageViaRpc",
-                                          new Type[] { typeof(object[]), typeof(string), typeof(Type) }) ?? throw new InvalidOperationException());
+                il.Emit(OpCodes.Call, typeof(MqRpcHelper).GetMethod("ReadMessageViaRpc",
+                                          new Type[] { typeof(string), typeof(string), typeof(object[]) }) ?? throw new InvalidOperationException());
                 il.Emit(OpCodes.Ret);
                 typeBuilder.DefineMethodOverride(mbIm, typeof(T).GetMethod(m.Name) ?? throw new InvalidOperationException());
             }
@@ -60,11 +61,11 @@ namespace Library.Framework.Core.Utility
             return (T)Activator.CreateInstance(personType);
         }
 
-        public static object ReadMessageViaRpc(object[] objects, string contract, string method)
+        public static object ReadMessageViaRpc(string contract, string method, object[] objects)
         {
             RabbitMqHelper rabbitMqHelper = new RabbitMqHelper("amqp://192.168.137.2:5672/", "guest", "guest", 2);
             var id = IdentityHelper.NewSequentialGuid().ToString("N");
-            rabbitMqHelper.SendMessage($"server:{contract}", "", "", new RpcDto
+            var s = new RpcDto
             {
                 Id = id,
                 Content = new RpcMessageClientDto
@@ -72,9 +73,10 @@ namespace Library.Framework.Core.Utility
                     Method = method,
                     Params = objects
                 }
-            }.ObjectToBytes());
+            };
+            rabbitMqHelper.SendMessage($"server:{contract}", "", "", s.ObjectToBytes());
             object result = null;
-            bool receive=false;
+            bool receive = false;
 
             rabbitMqHelper.ReadMessage(id, (ob, ea) =>
             {
@@ -84,7 +86,7 @@ namespace Library.Framework.Core.Utility
             var start = DateTime.Now.ToTimeStamp();
             while (!receive)
             {
-               if(DateTime.Now.ToTimeStamp()-start>300)
+                if (DateTime.Now.ToTimeStamp() - start > 300)
                     throw new Exception("等待超时");
             }
             return result;

@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace Library.Framework.Core.Model
 {
+    [System.Serializable]
     public class RpcMessageClientDto
     {
         /// <summary>

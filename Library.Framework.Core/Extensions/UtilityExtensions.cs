@@ -60,6 +60,8 @@ namespace Library.Framework.Core.Extensions
 
         public static byte[] ObjectToBytes(this object ob)
         {
+            if (ob == null)
+                return new byte[] { };
             using (MemoryStream stream = new MemoryStream())
             {
                 IFormatter formatter = new BinaryFormatter();
