@@ -2,6 +2,7 @@
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System;
 using System.IO;
+using System.Reflection;
 using System.Runtime.Loader;
 
 namespace Library.Framework.Web
@@ -28,6 +29,26 @@ namespace Library.Framework.Web
             foreach (var d in din.GetFiles("*.xml", SearchOption.AllDirectories)) {
                 options.IncludeXmlComments(d.FullName);
             }
+        }
+
+        public static void LoadAssmbleys()
+        {
+            var dir = Path.Combine(_baseDir, "DynamicLib");
+            DirectoryInfo dynamicInfo = new DirectoryInfo(dir);
+            if (dynamicInfo.Exists)
+            {
+                var fileInfoList = dynamicInfo.GetFiles("*.dll");
+                foreach (var fileInfo in fileInfoList)
+                {
+                    using (FileStream fileStream = fileInfo.OpenRead())
+                    {
+                        var resourceBytes = new byte[fileInfo.Length];
+                        fileStream.Read(resourceBytes, 0, resourceBytes.Length);
+                        var dependAssembly = Assembly.Load(resourceBytes);
+                    }
+                }
+            }
+
         }
     }
 }

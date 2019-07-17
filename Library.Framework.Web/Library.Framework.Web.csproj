@@ -20,4 +20,9 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="DynamicLib\" />
+    <Folder Include="Properties\" />
+  </ItemGroup>
+
 </Project>
