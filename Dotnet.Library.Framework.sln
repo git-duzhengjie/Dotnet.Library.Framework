@@ -5,15 +5,17 @@ VisualStudioVersion = 16.0.29102.190
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Library.Framework.Core", "Library.Framework.Core\Library.Framework.Core.csproj", "{22B269BA-8A34-428E-821F-81BF33F64027}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Library.Framework.Web", "Library.Framework.Web\Library.Framework.Web.csproj", "{AD9433DC-55BD-48A7-9321-8099CA0C1D8F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Framework.Web.Test", "Framework.Web.Test\Framework.Web.Test.csproj", "{3544A5DE-BF98-4A23-8A3C-00CE60538A22}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Framework.Web.Test", "Framework.Web.Test\Framework.Web.Test.csproj", "{3544A5DE-BF98-4A23-8A3C-00CE60538A22}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.Contract", "Test.Contract\Test.Contract.csproj", "{799678CC-7A7A-4F60-BAC8-E7512F03AB46}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Contract", "Test.Contract\Test.Contract.csproj", "{799678CC-7A7A-4F60-BAC8-E7512F03AB46}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.Server", "Test.Server\Test.Server.csproj", "{17732640-529F-4915-BDF1-2DEDC4BCEFA0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Server", "Test.Server\Test.Server.csproj", "{17732640-529F-4915-BDF1-2DEDC4BCEFA0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.Client", "Test.Client\Test.Client.csproj", "{E18D2A3B-51BF-4D8C-A7AD-B096226F58CC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Client", "Test.Client\Test.Client.csproj", "{E18D2A3B-51BF-4D8C-A7AD-B096226F58CC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Library.Framework.Web", "Library.Framework.Web\Library.Framework.Web.csproj", "{8CC3E633-0E4C-49B5-A6F3-E640B1400001}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library.Framework.Plugin", "Library.Framework.Plugin\Library.Framework.Plugin.csproj", "{90E9526C-C343-4FEC-84A1-80C0C97883E8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,10 +27,6 @@ Global
 		{22B269BA-8A34-428E-821F-81BF33F64027}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{22B269BA-8A34-428E-821F-81BF33F64027}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{22B269BA-8A34-428E-821F-81BF33F64027}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AD9433DC-55BD-48A7-9321-8099CA0C1D8F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AD9433DC-55BD-48A7-9321-8099CA0C1D8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AD9433DC-55BD-48A7-9321-8099CA0C1D8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AD9433DC-55BD-48A7-9321-8099CA0C1D8F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3544A5DE-BF98-4A23-8A3C-00CE60538A22}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3544A5DE-BF98-4A23-8A3C-00CE60538A22}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3544A5DE-BF98-4A23-8A3C-00CE60538A22}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -45,6 +43,14 @@ Global
 		{E18D2A3B-51BF-4D8C-A7AD-B096226F58CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E18D2A3B-51BF-4D8C-A7AD-B096226F58CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E18D2A3B-51BF-4D8C-A7AD-B096226F58CC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8CC3E633-0E4C-49B5-A6F3-E640B1400001}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8CC3E633-0E4C-49B5-A6F3-E640B1400001}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8CC3E633-0E4C-49B5-A6F3-E640B1400001}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8CC3E633-0E4C-49B5-A6F3-E640B1400001}.Release|Any CPU.Build.0 = Release|Any CPU
+		{90E9526C-C343-4FEC-84A1-80C0C97883E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{90E9526C-C343-4FEC-84A1-80C0C97883E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{90E9526C-C343-4FEC-84A1-80C0C97883E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{90E9526C-C343-4FEC-84A1-80C0C97883E8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

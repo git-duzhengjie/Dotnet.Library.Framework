@@ -15,3 +15,7 @@
 /Test.Contract/obj
 /Test.Server/bin/Debug/netcoreapp3.0
 /Test.Server/obj
+/Library.Framework.Plugin/bin/Debug/netstandard2.0
+/Library.Framework.Plugin/obj
+/Library.Framework.Web/bin/Debug/netcoreapp2.2
+/Library.Framework.Web/obj/Debug/netcoreapp2.2

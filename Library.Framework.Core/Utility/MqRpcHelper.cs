@@ -82,11 +82,12 @@ namespace Library.Framework.Core.Utility
             {
                 result = ea.Body.BytesToObject();
                 receive = true;
+                rabbitMqHelper.DeleteQueue(id);
             });
             var start = DateTime.Now.ToTimeStamp();
             while (!receive)
             {
-                if (DateTime.Now.ToTimeStamp() - start > 300)
+                if (DateTime.Now.ToTimeStamp() - start > 3000)
                     throw new Exception("等待超时");
             }
             return result;

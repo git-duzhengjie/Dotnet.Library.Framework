@@ -107,5 +107,13 @@ namespace Library.Framework.Core.Utility
         {
             _con.Close();
         }
+
+        public void DeleteQueue(string queue) {
+            _ch.QueueDelete(queue);
+        }
+
+        public void DeleteExchange(string exchange) {
+            _ch.ExchangeDelete(exchange);
+        }
     }
 }
