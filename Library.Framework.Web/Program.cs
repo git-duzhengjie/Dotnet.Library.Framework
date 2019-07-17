@@ -12,7 +12,7 @@ namespace Library.Framework.Web
     {
         public static void Main(string[] args)
         {
-            InitExtensions.LoadAssmbleys();
+            InitExtensions.LoadLib();
             CreateWebHostBuilder(args).Build().Run();
         }
 

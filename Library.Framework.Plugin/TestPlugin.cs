@@ -1,12 +1,26 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Library.Framework.Core.Aspnet;
+using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using Test.Contract;
 
 namespace Library.Framework.Plugin
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [Route("api/[controller]")]
-    public class TestPlugin : ControllerBase
+    public class TestPlugin : WebApiController,ITest
     {
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public override bool IsAuth => true;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public override bool IsRegisterRpc => true;
         /// <summary>
         /// 测试
         /// </summary>
@@ -50,10 +64,25 @@ namespace Library.Framework.Plugin
         {
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
         // DELETE api/values/5
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="hello"></param>
+        /// <returns></returns>
+        [HttpPost("getMessage")]
+        public ActionResult<HelloDto> GetMessage([FromBody]HelloDto hello)
+        {
+            return hello;
         }
     }
 }
