@@ -21,3 +21,6 @@
 /Library.Framework.Web/obj/Debug/netcoreapp2.2
 /TestApp/bin/Debug/netcoreapp3.0
 /TestApp/obj
+/Library.Framework.Core/obj
+/Library.Framework.Web/obj
+/Library.Framework.Core/obj
