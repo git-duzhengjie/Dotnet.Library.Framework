@@ -1,4 +1,5 @@
-﻿using Library.Framework.Web;
+﻿using Library.Framework.Core.Aspnet;
+using Library.Framework.Web;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -20,7 +21,9 @@ namespace Framework.Web.Test
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc(options => {
+                options.Filters.Add(typeof(CustomExceptionFilter));
+            }).SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.LoadPlugin();
             services.AddSwaggerGen(c =>
             {

@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System;
-using System.IO;
 
 namespace Library.Framework.Core.Aspnet
 {
@@ -36,16 +35,7 @@ namespace Library.Framework.Core.Aspnet
             base.OnActionExecuting(context);
             if (IsAuth && !Request.Headers.ContainsKey("token"))
             {
-                context.HttpContext.Response.StatusCode = 401;
-            }
-        }
-
-        public override void OnActionExecuted(ActionExecutedContext context)
-        {
-            base.OnActionExecuted(context);
-            if (IsAuth && !Request.Headers.ContainsKey("token"))
-            {
-                context.HttpContext.Response.Body = new MemoryStream();
+                throw new UnauthorizedAccessException("非法的请求！");
             }
         }
 
