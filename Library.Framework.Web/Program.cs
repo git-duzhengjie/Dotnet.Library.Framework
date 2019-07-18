@@ -12,7 +12,7 @@ namespace Library.Framework.Web
         }
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) {
-            var urls = string.Format("http://*:{0}/", 9098);
+            var urls = string.Format("http://*:{0}/", 9099);
             return WebHost.CreateDefaultBuilder(args)
                 .UseUrls(urls)
                 .UseStartup<Startup>();
