@@ -15,7 +15,7 @@ namespace Library.Framework.Plugin
         /// <summary>
         /// 
         /// </summary>
-        public override bool IsAuth => false;
+        public override bool IsAuth => true;
 
         /// <summary>
         /// 
