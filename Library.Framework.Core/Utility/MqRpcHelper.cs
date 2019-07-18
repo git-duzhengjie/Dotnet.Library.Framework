@@ -2,8 +2,6 @@
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Text;
-using System.Threading.Tasks;
 using Library.Framework.Core.Extensions;
 using Library.Framework.Core.Model;
 
@@ -12,7 +10,7 @@ namespace Library.Framework.Core.Utility
     public class MqRpcHelper
     {
         public delegate object Process(RpcDto message);
-        public static RabbitMqHelper rabbitMqHelper;
+        public static RabbitMqHelper rabbitMqHelper= new RabbitMqHelper("amqp://192.168.137.2:5672/", "guest", "guest", 2);
         public MqRpcHelper(ServerConfiguration serverConfiguration)
         {
             //测试
