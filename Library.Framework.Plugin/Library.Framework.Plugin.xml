@@ -4,10 +4,68 @@
         <name>Library.Framework.Plugin</name>
     </assembly>
     <members>
+        <member name="T:Library.Framework.Plugin.TestPlugin">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Library.Framework.Plugin.TestPlugin.IsAuth">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Library.Framework.Plugin.TestPlugin.IsRegisterRpc">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Library.Framework.Plugin.TestPlugin.Name">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Library.Framework.Plugin.TestPlugin.Id">
+            <summary>
+            
+            </summary>
+        </member>
         <member name="M:Library.Framework.Plugin.TestPlugin.Get">
             <summary>
             测试
             </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Library.Framework.Plugin.TestPlugin.Get(System.Int32)">
+            <summary>
+            
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Library.Framework.Plugin.TestPlugin.Post(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="value"></param>
+        </member>
+        <member name="M:Library.Framework.Plugin.TestPlugin.Put(System.Int32,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="id"></param>
+            <param name="value"></param>
+        </member>
+        <member name="M:Library.Framework.Plugin.TestPlugin.Delete(System.Int32)">
+            <summary>
+            
+            </summary>
+            <param name="id"></param>
+        </member>
+        <member name="M:Library.Framework.Plugin.TestPlugin.GetMessage(Test.Contract.HelloDto)">
+            <summary>
+            
+            </summary>
+            <param name="hello"></param>
             <returns></returns>
         </member>
     </members>

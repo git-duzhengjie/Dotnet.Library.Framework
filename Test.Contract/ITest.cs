@@ -1,8 +1,10 @@
-﻿namespace Test.Contract
+﻿using Microsoft.AspNetCore.Mvc;
+
+namespace Test.Contract
 {
     public interface ITest
     {
-        HelloDto GetMessage(HelloDto hello);
+       HelloDto GetMessage(HelloDto hello);
 
     }
 }

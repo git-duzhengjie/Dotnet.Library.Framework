@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.AspNetCore.Mvc;
 using Test.Contract;
 
 namespace Test.Server
@@ -13,6 +14,11 @@ namespace Test.Server
         public void SayHello(string word)
         {
             Console.WriteLine(word);
+        }
+
+        HelloDto ITest.GetMessage(HelloDto hello)
+        {
+            throw new NotImplementedException();
         }
     }
 }
