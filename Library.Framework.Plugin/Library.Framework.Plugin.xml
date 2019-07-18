@@ -19,6 +19,16 @@
             
             </summary>
         </member>
+        <member name="P:Library.Framework.Plugin.TestPlugin.Name">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Library.Framework.Plugin.TestPlugin.Id">
+            <summary>
+            
+            </summary>
+        </member>
         <member name="M:Library.Framework.Plugin.TestPlugin.Get">
             <summary>
             测试

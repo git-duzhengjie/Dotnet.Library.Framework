@@ -20,7 +20,6 @@ namespace Library.Framework.Web
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-            //services.LoadLib();
             services.LoadPlugin();
             services.AddSwaggerGen(c =>
             {

@@ -15,12 +15,21 @@ namespace Library.Framework.Plugin
         /// <summary>
         /// 
         /// </summary>
-        public override bool IsAuth => true;
+        public override bool IsAuth => false;
 
         /// <summary>
         /// 
         /// </summary>
         public override bool IsRegisterRpc => true;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public override string Name => "测试";
+        /// <summary>
+        /// 
+        /// </summary>
+        public override string Id => "B95B6E07-EE83-4458-83CA-0843D3F0C7E9";
         /// <summary>
         /// 测试
         /// </summary>
@@ -80,7 +89,7 @@ namespace Library.Framework.Plugin
         /// <param name="hello"></param>
         /// <returns></returns>
         [HttpPost("getMessage")]
-        public ActionResult<HelloDto> GetMessage([FromBody]HelloDto hello)
+        public HelloDto GetMessage([FromBody]HelloDto hello)
         {
             return hello;
         }

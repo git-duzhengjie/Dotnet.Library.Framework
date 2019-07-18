@@ -4,7 +4,7 @@ namespace Test.Contract
 {
     public interface ITest
     {
-        ActionResult<HelloDto> GetMessage(HelloDto hello);
+       HelloDto GetMessage(HelloDto hello);
 
     }
 }

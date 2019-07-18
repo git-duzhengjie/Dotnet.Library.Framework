@@ -8,6 +8,8 @@ using System.Runtime.Loader;
 using Microsoft.AspNetCore.Http.Internal;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc.Razor.Compilation;
+using System.Collections.Generic;
+using Library.Framework.Core.Utility;
 
 namespace Library.Framework.Web
 {
@@ -16,17 +18,40 @@ namespace Library.Framework.Web
         private static string _baseDir=> AppDomain.CurrentDomain.BaseDirectory;
         public static void LoadPlugin(this IServiceCollection services) {
             var pluginDir = Path.Combine(_baseDir, "Plugins");
+            IList<KeyValuePair<Assembly, int>> keyValues = new List<KeyValuePair<Assembly, int>>();
             foreach (string dll in Directory.GetFiles(pluginDir, "*.dll")) {
                 try
                 {
                     var assemb = AssemblyLoadContext.Default.LoadFromAssemblyPath(dll);
-                    services.AddMvc().AddApplicationPart(assemb);
+                    var types = assemb.GetTypes();
+                    var query = from t in types where t.IsClass&&t.BaseType.Name=="WebApiController" select t;
+                    var type = query.ToList().First();
+                    var obj = Activator.CreateInstance(type);
+                    var priority = type.GetProperty("Priority").GetValue(obj);
+                    var isRpc = type.GetProperty("IsRegisterRpc").GetValue(obj);
+                    if ((bool)isRpc) {
+                        var contract = type.GetInterfaces().First().FullName;
+                        MqRpcHelper.RegisterRpcServer(contract, (r) => {
+                            var c = r.Content;
+                            Console.WriteLine(r.Content.Method);
+                            MethodInfo m = type.GetMethod(c.Method);
+                            if (m != null)
+                                return m.Invoke(obj, c.Params);
+                            return null;
+                        });
+                    }
+                    keyValues.Add(new KeyValuePair<Assembly, int> (assemb, (int)priority));
                 }
                 catch (Exception ex) {
                     //Console.WriteLine(ex.Message);
                 }
             }
+            var sort = from k in keyValues orderby k.Value ascending select k.Key; 
+            foreach (var k in sort) {
+                services.AddMvc().AddApplicationPart(k);
+            }
         }
+
 
         public static void LoadLib() {
             var libDir = Path.Combine(_baseDir, "Lib");
