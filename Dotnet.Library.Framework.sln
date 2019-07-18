@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Library.Framework.Web", "Li
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library.Framework.Plugin", "Library.Framework.Plugin\Library.Framework.Plugin.csproj", "{90E9526C-C343-4FEC-84A1-80C0C97883E8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApp", "TestApp\TestApp.csproj", "{DBCD6D18-2C43-4D7F-A5F2-49E7B003324C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{90E9526C-C343-4FEC-84A1-80C0C97883E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{90E9526C-C343-4FEC-84A1-80C0C97883E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{90E9526C-C343-4FEC-84A1-80C0C97883E8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DBCD6D18-2C43-4D7F-A5F2-49E7B003324C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DBCD6D18-2C43-4D7F-A5F2-49E7B003324C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DBCD6D18-2C43-4D7F-A5F2-49E7B003324C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DBCD6D18-2C43-4D7F-A5F2-49E7B003324C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

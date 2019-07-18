@@ -1,7 +1,5 @@
-﻿using Library.Framework.Core.Model;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using System;
 using System.IO;
 
 namespace Library.Framework.Core.Aspnet
@@ -48,10 +46,6 @@ namespace Library.Framework.Core.Aspnet
             {
                 context.HttpContext.Response.Body = new MemoryStream();
             }
-            //
-            //
-            //wr.Write("hello");
-            //=stream;
         }
 
     }

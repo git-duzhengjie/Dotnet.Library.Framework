@@ -19,3 +19,5 @@
 /Library.Framework.Plugin/obj
 /Library.Framework.Web/bin/Debug/netcoreapp2.2
 /Library.Framework.Web/obj/Debug/netcoreapp2.2
+/TestApp/bin/Debug/netcoreapp3.0
+/TestApp/obj
