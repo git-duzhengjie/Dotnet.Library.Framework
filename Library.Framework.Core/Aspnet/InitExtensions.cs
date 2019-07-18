@@ -34,11 +34,13 @@ namespace Library.Framework.Web
                     var name = type.GetProperty("Name").GetValue(obj);
                     var id = type.GetProperty("Id").GetValue(obj);
                     var isRpc = type.GetProperty("IsRegisterRpc").GetValue(obj);
+                    var isAuth = type.GetProperty("IsAuth").GetValue(obj);
                     var plugin = new PluginEntity {
-                        Name =(string)name,
-                        Id=(string)id,
-                        Priority=(int)priority,
-                        Assembly=assemb
+                        Name = (string)name,
+                        Id = (string)id,
+                        Priority = (int)priority,
+                        Assembly = assemb,
+                        IsAuth = (bool)isAuth
                     };
                     plugins.Add(plugin);
                     if ((bool)isRpc) {
@@ -63,6 +65,8 @@ namespace Library.Framework.Web
             foreach (var k in sort) {
                 services.AddMvcCore().AddApplicationPart(k.Assembly);
                 Console.WriteLine($"【{k.Priority}】{k.Name}插件（{k.Id}）加载成功!");
+                if(k.IsAuth)
+                    Console.WriteLine($"【{k.Priority}】{k.Name}插件（{k.Id}）开启token验证!");
             }
             Console.ResetColor();
         }
@@ -112,6 +116,8 @@ namespace Library.Framework.Web
             }
             services.AddMvcCore().AddApplicationPart(type.Assembly);
             Console.WriteLine($"【{plugin.Priority}】{plugin.Name}插件（{plugin.Id}）加载成功!");
+            if (plugin.IsAuth)
+                Console.WriteLine($"【{plugin.Priority}】{plugin.Name}插件（{plugin.Id}）开启token验证!");
             Console.ResetColor();
         }
     }

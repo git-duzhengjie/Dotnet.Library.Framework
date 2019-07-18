@@ -23,5 +23,10 @@ namespace Library.Framework.Web.Model
         /// 插件程序集
         /// </summary>
         public Assembly Assembly { get; set; }
+
+        /// <summary>
+        /// 是否开启token校验
+        /// </summary>
+        public bool IsAuth { get; set; }
     }
 }
