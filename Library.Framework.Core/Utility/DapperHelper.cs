@@ -1,5 +1,8 @@
 ﻿using Dapper;
+using Library.Framework.Core.Enum;
 using Library.Framework.Core.Model;
+using MySql.Data.MySqlClient;
+using Npgsql;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -32,7 +35,8 @@ namespace Library.Framework.Core.Utility
         private DapperHelper(DatabaseConfiguration config)
         {
             // 这里为了方便演示直接写的字符串，实例项目中可以将连接字符串放在配置文件中，再进行读取。
-            _connection = $"server={config.Host};uid={config.User};pwd={config.Password};database={config.Database};port={config.Port}";
+            //_connection = $"server={config.Host};uid={config.User};pwd={config.Password};database={config.Database};port={config.Port}";
+            _connection = config.Connection;
         }
 
         /// <summary>
@@ -60,11 +64,22 @@ namespace Library.Framework.Core.Utility
         /// 创建数据库连接对象并打开链接
         /// </summary>
         /// <returns></returns>
-        public static IDbConnection OpenCurrentDbConnection()
+        public static IDbConnection OpenCurrentDbConnection(DBType dBType)
         {
             if (dbConnection == null)
             {
-                dbConnection = new SqlConnection(Connection);
+                switch (dBType)
+                {
+                    case DBType.SqlServer:
+                        dbConnection = new SqlConnection(Connection);
+                        break;
+                    case DBType.PgSql:
+                        dbConnection = new NpgsqlConnection(Connection);
+                        break;
+                    case DBType.MySql:
+                        dbConnection = new MySqlConnection(Connection);
+                        break;
+                }
             }
             //判断连接状态
             if (dbConnection.State == ConnectionState.Closed)
@@ -74,6 +89,7 @@ namespace Library.Framework.Core.Utility
             return dbConnection;
         }
     }
+     
 
     public static class DbContext
     {
@@ -85,7 +101,7 @@ namespace Library.Framework.Core.Utility
             {
                 //创建单一实例
                 DapperHelper.GetInstance(_config);
-                return DapperHelper.OpenCurrentDbConnection();
+                return DapperHelper.OpenCurrentDbConnection(_config.DBtype);
             }
         }
 

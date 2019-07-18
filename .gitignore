@@ -24,3 +24,6 @@
 /Library.Framework.Core/obj
 /Library.Framework.Web/obj
 /Library.Framework.Core/obj
+/Library.Framework.Web/bin/Debug/netcoreapp2.2
+/Library.Framework.Web/obj/Debug/netcoreapp2.2
+/.vs/Dotnet.Library.Framework/v15/Server/sqlite3
