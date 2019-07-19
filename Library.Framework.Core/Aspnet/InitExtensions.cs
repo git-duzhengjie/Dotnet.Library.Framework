@@ -27,46 +27,67 @@ namespace Library.Framework.Web
                 {
                     var assemb = AssemblyLoadContext.Default.LoadFromAssemblyPath(dll);
                     var types = assemb.GetTypes();
-                    var query = from t in types where t.IsClass&&t.BaseType.Name=="WebApiController" select t;
+                    var query = from t in types where t.IsClass select t;
                     var type = query.ToList().First();
-                    var obj = Activator.CreateInstance(type);
-                    var priority = type.GetProperty("Priority").GetValue(obj);
-                    var name = type.GetProperty("Name").GetValue(obj);
-                    var id = type.GetProperty("Id").GetValue(obj);
-                    var isRpc = type.GetProperty("IsRegisterRpc").GetValue(obj);
-                    var isAuth = type.GetProperty("IsAuth").GetValue(obj);
-                    var plugin = new PluginEntity {
-                        Name = (string)name,
-                        Id = (string)id,
-                        Priority = (int)priority,
-                        Assembly = assemb,
-                        IsAuth = (bool)isAuth
-                    };
-                    plugins.Add(plugin);
-                    if ((bool)isRpc) {
-                        var contract = type.GetInterfaces().First().FullName;
-                        MqRpcHelper.RegisterRpcServer(contract, (r) => {
-                            var c = r.Content;
-                            MethodInfo m = type.GetMethod(c.Method);
-                            if (m != null)
-                                return m.Invoke(obj, c.Params);
-                            return DResult.Error("Rpc服务中心没有找到该方法！");
-                        });
-
-                        Console.WriteLine($"【{plugin.Priority}】{plugin.Name}插件（{plugin.Id}）rpc注册成功!");
+                    PluginEntity plugin=null;
+                    if (type == null)
+                    {
+                        continue;
                     }
-                    
+                    else
+                    {
+                        var obj = Activator.CreateInstance(type);
+                        var priority = type.GetProperty("Priority").GetValue(obj);
+                        var name = type.GetProperty("Name").GetValue(obj);
+                        var id = type.GetProperty("Id").GetValue(obj);
+                        var isRpc = type.GetProperty("IsRegisterRpc").GetValue(obj);
+                        bool isAuth=false;
+                        if(type.BaseType==typeof(WebApiController))
+                            isAuth = (bool)type.GetProperty("IsAuth").GetValue(obj);
+                        plugin = new PluginEntity
+                        {
+                            Name = (string)name,
+                            Id = (string)id,
+                            Priority = (int)priority,
+                            Assembly = assemb,
+                            IsAuth = isAuth,
+                            IsRegisterRpc = (bool)isRpc,
+                            Type = type,
+                            Obj=obj
+                        };
+                    }
+                    plugins.Add(plugin);
                 }
                 catch (Exception ex) {
-                    //Console.WriteLine(ex.Message);
+                    Console.WriteLine(ex.Message);
                 }
             }
             var sort = from k in plugins orderby k.Priority ascending select k; 
             foreach (var k in sort) {
-                services.AddMvcCore().AddApplicationPart(k.Assembly);
+                if (k.Type.BaseType == typeof(WebApiController))
+                    services.AddMvcCore().AddApplicationPart(k.Assembly);
+                else
+                {
+
+                }
                 Console.WriteLine($"【{k.Priority}】{k.Name}插件（{k.Id}）加载成功!");
                 if(k.IsAuth)
                     Console.WriteLine($"【{k.Priority}】{k.Name}插件（{k.Id}）开启token验证!");
+                if (k.IsRegisterRpc)
+                {
+                    var contract = k.Type.GetInterfaces().First().FullName;
+                    var obj = Activator.CreateInstance(k.Type);
+                    MqRpcHelper.RegisterRpcServer(contract, (r) =>
+                    {
+                        var c = r.Content;
+                        MethodInfo m = k.Type.GetMethod(c.Method);
+                        if (m != null)
+                            return m.Invoke(obj, c.Params);
+                        return DResult.Error("Rpc服务中心没有找到该方法！");
+                    });
+
+                    Console.WriteLine($"【{k.Priority}】{k.Name}插件（{k.Id}）rpc注册成功!");
+                }
             }
             Console.ResetColor();
         }

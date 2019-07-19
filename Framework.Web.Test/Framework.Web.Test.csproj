@@ -18,4 +18,10 @@
     <ProjectReference Include="..\Library.Framework.Plugin\Library.Framework.Plugin.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Plugins\RabbitMq.Manage.Plugin.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

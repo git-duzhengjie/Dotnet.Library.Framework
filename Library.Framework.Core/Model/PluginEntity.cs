@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 
 namespace Library.Framework.Web.Model
 {
@@ -28,5 +29,20 @@ namespace Library.Framework.Web.Model
         /// 是否开启token校验
         /// </summary>
         public bool IsAuth { get; set; }
+
+        /// <summary>
+        /// 是否注册rpc服务
+        /// </summary>
+        public bool IsRegisterRpc { get; set; }
+
+        /// <summary>
+        /// 插件类型
+        /// </summary>
+        public Type Type { get; set; }
+
+        /// <summary>
+        /// 插件实例
+        /// </summary>
+        public object Obj { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Library.Framework.Core.Aspnet;
+using Library.Framework.Core.Utility;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using Test.Contract;
@@ -15,7 +16,7 @@ namespace Library.Framework.Plugin
         /// <summary>
         /// 
         /// </summary>
-        public override bool IsAuth => true;
+        public override bool IsAuth => false;
 
         /// <summary>
         /// 
@@ -91,6 +92,7 @@ namespace Library.Framework.Plugin
         [HttpPost("getMessage")]
         public HelloDto GetMessage([FromBody]HelloDto hello)
         {
+            var cache = SingletonUtility.GetSingleton<RedisHelper>();
             return hello;
         }
     }

@@ -1,5 +1,6 @@
 ﻿using Library.Framework.Core.Extensions;
 using StackExchange.Redis;
+using System;
 
 namespace Library.Framework.Core.Utility
 {
@@ -19,14 +20,18 @@ namespace Library.Framework.Core.Utility
         /// <param name="key"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public bool SetValue(string key, string value)
+        public bool SetValue(string key, string value, int ?seconds=null)
         {
+            if(seconds!=null)
+                return Db.StringSet(key, value, TimeSpan.FromSeconds((double)seconds));
             return Db.StringSet(key, value);
         }
 
-        public bool SetValue<T>(string key, T value)
+        public bool SetValue<T>(string key, T value, int? seconds = null)
         {
-            return Db.StringSet(key, value.SerializeJson());
+            if(seconds==null)
+                return Db.StringSet(key, value.SerializeJson());
+            return Db.StringSet(key, value.SerializeJson(), TimeSpan.FromSeconds((double)seconds));
         }
 
         /// <summary>
