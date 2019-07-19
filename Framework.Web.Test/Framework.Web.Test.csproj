@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Plugins\RabbitMq.Manage.Plugin.dll">
+    <None Update="Plugins\Logger.Manage.Plugin.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
