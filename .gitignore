@@ -34,3 +34,5 @@
 /RabbitMq.Manage.Plugin/bin/Debug/netstandard2.0
 /RabbitMq.Manage.Plugin/obj
 /Logger.Manage.Plugin/bin/Debug/netstandard2.0
+/ConsoleTest/bin/Debug/netcoreapp3.0
+/ConsoleTest/obj

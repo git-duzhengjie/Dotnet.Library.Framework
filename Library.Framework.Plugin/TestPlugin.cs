@@ -1,5 +1,6 @@
 ﻿using Library.Framework.Core.Aspnet;
 using Library.Framework.Core.Utility;
+using log4net;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using Test.Contract;
@@ -92,7 +93,8 @@ namespace Library.Framework.Plugin
         [HttpPost("getMessage")]
         public HelloDto GetMessage([FromBody]HelloDto hello)
         {
-            var cache = SingletonUtility.GetSingleton<RedisHelper>();
+            var logger = SingletonUtility.GetSingleton<ILog>();
+            logger.Info("test");
             return hello;
         }
     }

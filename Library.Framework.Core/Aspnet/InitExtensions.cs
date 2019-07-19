@@ -59,7 +59,7 @@ namespace Library.Framework.Web
                     plugins.Add(plugin);
                 }
                 catch (Exception ex) {
-                    Console.WriteLine(ex.Message);
+                    Console.WriteLine(ex.ToString());
                 }
             }
             var sort = from k in plugins orderby k.Priority ascending select k; 

@@ -1,7 +1,9 @@
 ﻿using Library.Framework.Core.Plugin;
+using Library.Framework.Core.Utility;
 using log4net;
 using log4net.Config;
 using log4net.Repository;
+using System;
 using System.IO;
 
 namespace Logger.Manage.Plugin
@@ -24,10 +26,10 @@ namespace Logger.Manage.Plugin
         public override int Priority => -11;
 
         public LoggerManage() {
-            ILoggerRepository repository = LogManager.CreateRepository("NETCoreRepository");
+            ILoggerRepository repository = LogManager.CreateRepository("SysLogger");
             XmlConfigurator.Configure(repository, new FileInfo("log4net.config"));
-            ILog log = LogManager.GetLogger(repository.Name, "NETCorelog4net");
-            log.Error("hello");
+            ILog log = LogManager.GetLogger(repository.Name, "SysLogger");
+            SingletonUtility.AddSingleton(log);
         }
     }
 }
