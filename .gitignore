@@ -36,3 +36,6 @@
 /Logger.Manage.Plugin/bin/Debug/netstandard2.0
 /ConsoleTest/bin/Debug/netcoreapp3.0
 /ConsoleTest/obj
+/Framework.Web.Test/Properties/launchSettings.json
+/Library.Framework.Web/Properties/launchSettings.json
+/ConsoleTest/bin/Debug/netcoreapp2.2
