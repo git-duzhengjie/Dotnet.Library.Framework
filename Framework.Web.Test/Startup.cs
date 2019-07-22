@@ -1,4 +1,5 @@
 ﻿using Library.Framework.Core.Aspnet;
+using Library.Framework.Plugin;
 using Library.Framework.Web;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -25,6 +26,8 @@ namespace Framework.Web.Test
                 options.Filters.Add(typeof(CustomExceptionFilter));
             }).SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.LoadPlugin();
+            //如果要测试rpc需加上如下语句
+            services.LoadPlugin(new TestPlugin());
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info { Title = "My API", Version = "v1" });

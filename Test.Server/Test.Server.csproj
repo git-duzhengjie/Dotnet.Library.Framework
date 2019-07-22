@@ -7,6 +7,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Library.Framework.Core\Library.Framework.Core.csproj" />
+    <ProjectReference Include="..\RabbitMq.Manage.Plugin\RabbitMq.Manage.Plugin.csproj" />
     <ProjectReference Include="..\Test.Contract\Test.Contract.csproj" />
   </ItemGroup>
 

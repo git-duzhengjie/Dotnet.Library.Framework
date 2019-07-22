@@ -22,11 +22,6 @@ namespace Library.Framework.Plugin
         /// <summary>
         /// 
         /// </summary>
-        public override bool IsRegisterRpc => true;
-
-        /// <summary>
-        /// 
-        /// </summary>
         public override string Name => "测试";
         /// <summary>
         /// 
