@@ -2,6 +2,7 @@
 using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Text;
 
 namespace Library.Framework.Core.Extensions
 {
@@ -68,6 +69,15 @@ namespace Library.Framework.Core.Extensions
                 formatter.Serialize(stream, ob);
                 return stream.GetBuffer();
             }
+        }
+
+        public static Stream ToStream(this string str) {
+            byte[] array = Encoding.UTF8.GetBytes(str);
+            return new MemoryStream(array);
+        }
+
+        public static bool IsNullOrEmpty(this string str) {
+            return string.IsNullOrEmpty(str);
         }
 
     }

@@ -1,6 +1,7 @@
 ﻿using Library.Framework.Web;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using System;
 
 namespace Framework.Web.Test
 {
@@ -8,6 +9,7 @@ namespace Framework.Web.Test
     {
         public static void Main(string[] args)
         {
+            Environment.SetEnvironmentVariable("Runtime", "Dev");
             InitExtensions.LoadLib();
             CreateWebHostBuilder(args).Build().Run();
         }

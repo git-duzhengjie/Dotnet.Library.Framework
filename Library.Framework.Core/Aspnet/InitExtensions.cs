@@ -10,6 +10,7 @@ using Library.Framework.Core.Model;
 using Library.Framework.Web.Model;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Library.Framework.Core.Aspnet;
+using Library.Framework.Core.Plugin;
 
 namespace Library.Framework.Web
 {
@@ -22,13 +23,16 @@ namespace Library.Framework.Web
                 return;
             Console.ForegroundColor = ConsoleColor.Green;
             IList<PluginEntity> plugins = new List<PluginEntity>();
-            foreach (string dll in Directory.GetFiles(pluginDir, "*.dll")) {
+            var dlls = Directory.GetFiles(pluginDir, "*.dll");
+            foreach (string dll in dlls) {
+                Type type=null;
                 try
                 {
                     var assemb = AssemblyLoadContext.Default.LoadFromAssemblyPath(dll);
                     var types = assemb.GetTypes();
-                    var query = from t in types where t.IsClass select t;
-                    var type = query.ToList().First();
+                    var query = from t in types where t.IsClass && 
+                                (t.BaseType == typeof(WebApiController)||t.BaseType==typeof(NoControllerBase)) select t;
+                    type = query.ToList().First();
                     PluginEntity plugin=null;
                     if (type == null)
                     {
@@ -59,7 +63,9 @@ namespace Library.Framework.Web
                     plugins.Add(plugin);
                 }
                 catch (Exception ex) {
-                    Console.WriteLine(ex.ToString());
+                    Console.ResetColor();
+                    Console.WriteLine(type?.FullName+ex.ToString());
+                    Console.ForegroundColor = ConsoleColor.Green;
                 }
             }
             var sort = from k in plugins orderby k.Priority ascending select k; 

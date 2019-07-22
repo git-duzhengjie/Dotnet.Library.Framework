@@ -19,7 +19,8 @@ namespace Cache.Manage.Plugin
         public override int Priority => -10;
 
         public CacheManage() {
-            RedisHelper redis = new RedisHelper("192.168.137.2:6379,ssl=false,connectTimeout=5000");
+            var config = ConfigurationManage.GetConfiguration($"configuration:{Id}");
+            RedisHelper redis = new RedisHelper(config);
             SingletonUtility.AddSingleton(redis);
         }
     }

@@ -46,7 +46,11 @@ namespace Library.Framework.Core.Utility
 
         public T GetValue<T>(string key)
         {
-            return Db.StringGet(key).ToString().DeserializeJson<T>();
+            var v = Db.StringGet(key).ToString();
+            if (v.IsNullOrEmpty()) {
+                return default;
+            }
+            return v.DeserializeJson<T>();
         }
 
         /// <summary>

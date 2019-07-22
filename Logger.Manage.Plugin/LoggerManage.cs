@@ -1,9 +1,13 @@
-﻿using Library.Framework.Core.Plugin;
+﻿using Library.Framework.Core.Extensions;
+using Library.Framework.Core.Model;
+using Library.Framework.Core.Plugin;
 using Library.Framework.Core.Utility;
 using log4net;
 using log4net.Config;
 using log4net.Repository;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 
 namespace Logger.Manage.Plugin
@@ -26,8 +30,21 @@ namespace Logger.Manage.Plugin
         public override int Priority => -11;
 
         public LoggerManage() {
+            var config = ConfigurationManage.GetConfiguration($"configuration:{Id}");
+            if (config == null) {
+                var cg = new ConfigurationModel
+                {
+                    Content= File.ReadAllText("log4net.config"),
+                    Runtime=Environment.GetEnvironmentVariable("Runtime"),
+                    Description="日志"
+                };
+                IList<ConfigurationModel> cgl = new List<ConfigurationModel>();
+                cgl.Add(cg);
+                config = cg.Content;
+                ConfigurationManage.SetConfiguration($"configuration:{Id}", cgl);
+            }
             ILoggerRepository repository = LogManager.CreateRepository("SysLogger");
-            XmlConfigurator.Configure(repository, new FileInfo("log4net.config"));
+            XmlConfigurator.Configure(repository, config.ToStream());
             ILog log = LogManager.GetLogger(repository.Name, "SysLogger");
             SingletonUtility.AddSingleton(log);
         }

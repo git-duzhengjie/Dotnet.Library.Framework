@@ -7,7 +7,9 @@ namespace Library.Framework.Core.Utility
         private static Dictionary<string, object> _singleton = new Dictionary<string, object>();
 
         public static void AddSingleton<T>(T t) {
-            _singleton.Add(typeof(T).FullName, t);
+            var name = typeof(T).FullName;
+            if(!_singleton.ContainsKey(name))
+                _singleton.Add(typeof(T).FullName, t);
         }
 
         public static T GetSingleton<T>() {

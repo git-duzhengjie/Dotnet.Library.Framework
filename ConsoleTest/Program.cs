@@ -1,4 +1,4 @@
-﻿using Logger.Manage.Plugin;
+﻿using RabbitMq.Manage.Plugin;
 using System;
 
 namespace ConsoleTest
@@ -7,7 +7,8 @@ namespace ConsoleTest
     {
         static void Main(string[] args)
         {
-            new LoggerManage();
+            Environment.SetEnvironmentVariable("Runtime", "Dev");
+            new RabbitMqManage();
             Console.Read();
         }
     }
