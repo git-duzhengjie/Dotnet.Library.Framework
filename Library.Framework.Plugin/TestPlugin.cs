@@ -1,4 +1,6 @@
 ﻿using Library.Framework.Core.Aspnet;
+using Library.Framework.Core.Extensions;
+using Library.Framework.Core.Plugin;
 using Library.Framework.Core.Utility;
 using log4net;
 using Microsoft.AspNetCore.Mvc;
@@ -27,6 +29,15 @@ namespace Library.Framework.Plugin
         /// 
         /// </summary>
         public override string Id => "B95B6E07-EE83-4458-83CA-0843D3F0C7E9";
+
+        /// <summary>
+        /// 
+        /// </summary>
+        protected override void Config()
+        {
+            base.Config();
+            var config = ConfigurationManage.GetConfiguration(Id).DeserializeJson<Configuration>();
+        }
         /// <summary>
         /// 测试
         /// </summary>

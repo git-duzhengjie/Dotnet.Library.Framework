@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Library.Framework.Core.Plugin;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System;
 
@@ -34,6 +35,10 @@ namespace Library.Framework.Core.Aspnet
             {
                 throw new UnauthorizedAccessException("非法的请求！");
             }
+        }
+
+        protected virtual void Config() {
+            
         }
 
     }

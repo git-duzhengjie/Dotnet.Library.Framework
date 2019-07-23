@@ -70,10 +70,10 @@ namespace Library.Framework.Web
             var sort = from k in plugins orderby k.Priority ascending select k; 
             foreach (var k in sort) {
                 if (k.Type.BaseType == typeof(WebApiController))
-                    services.AddMvcCore().AddApplicationPart(k.Assembly);
-                else
                 {
-
+                    services.AddMvcCore().AddApplicationPart(k.Assembly);
+                    MethodInfo m1 = k.Type.GetMethod("Config");
+                    m1.Invoke(k.Obj, new object[] { });
                 }
                 Console.WriteLine($"【{k.Priority}】{k.Name}插件（{k.Id}）加载成功!");
                 if(k.IsAuth)
@@ -84,13 +84,12 @@ namespace Library.Framework.Web
                 var contract = (from t in interfaces where t.GetInterface("RpcApi") != null select t.FullName).FirstOrDefault();
                 if (contract == null)
                     continue;
-                var obj = Activator.CreateInstance(k.Type);
                 MqRpcHelper.RegisterRpcServer(contract, (r) =>
                 {
                     var c = r.Content;
                     MethodInfo m = k.Type.GetMethod(c.Method);
                     if (m != null)
-                        return m.Invoke(obj, c.Params);
+                        return m.Invoke(k.Obj, c.Params);
                     return DResult.Error("Rpc服务中心没有找到该方法！");
                 });
 
@@ -148,7 +147,14 @@ namespace Library.Framework.Web
                     Console.WriteLine($"【{plugin.Priority}】{plugin.Name}插件（{plugin.Id}）rpc注册成功!");
                 }
             }
-            services.AddMvcCore().AddApplicationPart(type.Assembly);
+            if (type.BaseType == typeof(WebApiController))
+            {
+                services.AddMvcCore().AddApplicationPart(type.Assembly);
+                MethodInfo m1 = type.GetMethod("Config");
+                var obj = Activator.CreateInstance(type);
+                m1.Invoke(obj, new object[] { });
+            }
+            
             Console.WriteLine($"【{plugin.Priority}】{plugin.Name}插件（{plugin.Id}）加载成功!");
             if (plugin.IsAuth)
                 Console.WriteLine($"【{plugin.Priority}】{plugin.Name}插件（{plugin.Id}）开启token验证!");
