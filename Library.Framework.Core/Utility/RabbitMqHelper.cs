@@ -13,14 +13,12 @@ namespace Library.Framework.Core.Utility
         /// 4：Exchange：路由模式
         /// 5：Exchange： 通配符模式
         /// </summary>
-        private readonly int _model;
-
         private readonly IModel _ch;
         private readonly IConnection _con;
 
         public delegate void Process(object model, BasicDeliverEventArgs ea);
 
-        public RabbitMqHelper(string uri, string userName, string password, int model)
+        public RabbitMqHelper(string uri, string userName, string password)
         {
             IConnectionFactory connectionFactory = new ConnectionFactory
             {
@@ -29,36 +27,35 @@ namespace Library.Framework.Core.Utility
                 UserName = userName,
                 Password = password
             };
-            _model = model;
             _con = connectionFactory.CreateConnection();
             _ch = _con.CreateModel();
         }
 
-        public void SendMessage(string queue, string exchange, string routingKey, byte[] bytes)
+        public void SendMessage(string queue, string exchange, string routingKey, byte[] bytes, int model)
         {
 
-            if (_model == 1 || _model == 2)
+            if (model == 1 || model == 2)
             {
                 _ch.QueueDeclare(queue, false, false, false, null);
                 _ch.BasicPublish("", queue, null, bytes);
             }
-            else if (_model == 3)
+            else if (model == 3)
             {
                 _ch.ExchangeDeclare(exchange, "fanout");
                 _ch.BasicPublish(exchange, "", null, bytes);
             }
-            else if (_model == 4 || _model == 5)
+            else if (model == 4 || model == 5)
             {
-                _ch.ExchangeDeclare(exchange, _model == 4 ? "direct" : "topic");
+                _ch.ExchangeDeclare(exchange, model == 4 ? "direct" : "topic");
                 _ch.BasicPublish(exchange, routingKey, null, bytes);
             }
         }
 
-        public void ReadMessage(string queue, Process t)
+        public void ReadMessage(string queue, Process t, int model)
         {
-            if (_model == 1 || _model == 2)
+            if (model == 1 || model == 2)
                 _ch.QueueDeclare(queue, false, false, false, null);
-            if (_model == 3)
+            if (model == 3)
             {
                 _ch.ExchangeDeclare(queue, "fanout");
                 string q = queue + "_" + new Random().Next();
@@ -68,24 +65,24 @@ namespace Library.Framework.Core.Utility
             }
 
             var consumer = new EventingBasicConsumer(_ch);
-            if (_model == 1)
+            if (model == 1)
                 _ch.BasicConsume(queue, true, consumer);
-            else if (_model == 2 || _model == 3)
+            else if (model == 2 || model == 3)
                 _ch.BasicConsume(queue, false, consumer);
-            consumer.Received += (model, ea) =>
+            consumer.Received += (_model, ea) =>
             {
 
-                t(model, ea);
-                if (_model == 2 || _model == 3)
+                t(_model, ea);
+                if (model == 2 || model == 3)
                 {
                     _ch?.BasicAck(ea.DeliveryTag, true);
                 }
             };
         }
 
-        public void ReadMessage(string exchange, string[] routingKeys, Process t)
+        public void ReadMessage(string exchange, string[] routingKeys, Process t, int model)
         {
-            _ch.ExchangeDeclare(exchange, _model == 4 ? "direct" : "topic");
+            _ch.ExchangeDeclare(exchange, model == 4 ? "direct" : "topic");
             string queue = exchange + "_" + new Random().Next();
             _ch.QueueDeclare(queue, false, false, false, null);
             foreach (var v in routingKeys)
@@ -96,9 +93,9 @@ namespace Library.Framework.Core.Utility
             _ch.BasicQos(0, 1, false);
             var consumer = new EventingBasicConsumer(_ch);
             _ch.BasicConsume(queue, false, consumer);
-            consumer.Received += (model, ea) =>
+            consumer.Received += (_model, ea) =>
             {
-                t(model, ea);
+                t(_model, ea);
                 _ch.BasicAck(ea.DeliveryTag, true);
             };
         }

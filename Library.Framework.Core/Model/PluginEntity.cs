@@ -30,11 +30,7 @@ namespace Library.Framework.Web.Model
         /// </summary>
         public bool IsAuth { get; set; }
 
-        /// <summary>
-        /// 是否注册rpc服务
-        /// </summary>
-        public bool IsRegisterRpc { get; set; }
-
+       
         /// <summary>
         /// 插件类型
         /// </summary>

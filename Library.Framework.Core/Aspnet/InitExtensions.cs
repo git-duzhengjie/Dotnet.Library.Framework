@@ -10,6 +10,8 @@ using Library.Framework.Core.Model;
 using Library.Framework.Web.Model;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Library.Framework.Core.Aspnet;
+using Library.Framework.Core.Plugin;
+using Library.Framework.Core.Rpc;
 
 namespace Library.Framework.Web
 {
@@ -22,13 +24,16 @@ namespace Library.Framework.Web
                 return;
             Console.ForegroundColor = ConsoleColor.Green;
             IList<PluginEntity> plugins = new List<PluginEntity>();
-            foreach (string dll in Directory.GetFiles(pluginDir, "*.dll")) {
+            var dlls = Directory.GetFiles(pluginDir, "*.dll");
+            foreach (string dll in dlls) {
+                Type type=null;
                 try
                 {
                     var assemb = AssemblyLoadContext.Default.LoadFromAssemblyPath(dll);
                     var types = assemb.GetTypes();
-                    var query = from t in types where t.IsClass select t;
-                    var type = query.ToList().First();
+                    var query = from t in types where t.IsClass && 
+                                (t.BaseType == typeof(WebApiController)||t.BaseType==typeof(NoControllerBase)) select t;
+                    type = query.ToList().First();
                     PluginEntity plugin=null;
                     if (type == null)
                     {
@@ -40,7 +45,6 @@ namespace Library.Framework.Web
                         var priority = type.GetProperty("Priority").GetValue(obj);
                         var name = type.GetProperty("Name").GetValue(obj);
                         var id = type.GetProperty("Id").GetValue(obj);
-                        var isRpc = type.GetProperty("IsRegisterRpc").GetValue(obj);
                         bool isAuth=false;
                         if(type.BaseType==typeof(WebApiController))
                             isAuth = (bool)type.GetProperty("IsAuth").GetValue(obj);
@@ -51,7 +55,6 @@ namespace Library.Framework.Web
                             Priority = (int)priority,
                             Assembly = assemb,
                             IsAuth = isAuth,
-                            IsRegisterRpc = (bool)isRpc,
                             Type = type,
                             Obj=obj
                         };
@@ -59,7 +62,9 @@ namespace Library.Framework.Web
                     plugins.Add(plugin);
                 }
                 catch (Exception ex) {
-                    Console.WriteLine(ex.ToString());
+                    Console.ResetColor();
+                    Console.WriteLine(type?.FullName+ex.ToString());
+                    Console.ForegroundColor = ConsoleColor.Green;
                 }
             }
             var sort = from k in plugins orderby k.Priority ascending select k; 
@@ -73,21 +78,23 @@ namespace Library.Framework.Web
                 Console.WriteLine($"【{k.Priority}】{k.Name}插件（{k.Id}）加载成功!");
                 if(k.IsAuth)
                     Console.WriteLine($"【{k.Priority}】{k.Name}插件（{k.Id}）开启token验证!");
-                if (k.IsRegisterRpc)
+                var interfaces = k.Type.GetInterfaces();
+                if (interfaces == null || interfaces.ToList().Count == 0)
+                    continue;
+                var contract = (from t in interfaces where t.GetInterface("RpcApi") != null select t.FullName).FirstOrDefault();
+                if (contract == null)
+                    continue;
+                var obj = Activator.CreateInstance(k.Type);
+                MqRpcHelper.RegisterRpcServer(contract, (r) =>
                 {
-                    var contract = k.Type.GetInterfaces().First().FullName;
-                    var obj = Activator.CreateInstance(k.Type);
-                    MqRpcHelper.RegisterRpcServer(contract, (r) =>
-                    {
-                        var c = r.Content;
-                        MethodInfo m = k.Type.GetMethod(c.Method);
-                        if (m != null)
-                            return m.Invoke(obj, c.Params);
-                        return DResult.Error("Rpc服务中心没有找到该方法！");
-                    });
+                    var c = r.Content;
+                    MethodInfo m = k.Type.GetMethod(c.Method);
+                    if (m != null)
+                        return m.Invoke(obj, c.Params);
+                    return DResult.Error("Rpc服务中心没有找到该方法！");
+                });
 
-                    Console.WriteLine($"【{k.Priority}】{k.Name}插件（{k.Id}）rpc注册成功!");
-                }
+                Console.WriteLine($"【{k.Priority}】{k.Name}插件（{k.Id}）rpc注册成功!");
             }
             Console.ResetColor();
         }
@@ -122,18 +129,24 @@ namespace Library.Framework.Web
             Console.ForegroundColor = ConsoleColor.Green;
             var plugin = (WebApiController)_plugin;
             var type = typeof(T);
-            if (plugin.IsRegisterRpc)
+            var interfaces = type.GetInterfaces();
+            if (interfaces != null && interfaces.ToList().Count != 0)
             {
-                var contract = type.GetInterfaces().First().FullName;
-                MqRpcHelper.RegisterRpcServer(contract, (r) => {
-                    var c = r.Content;
-                    MethodInfo m = type.GetMethod(c.Method);
-                    if (m != null)
-                        return m.Invoke(plugin, c.Params);
-                    return DResult.Error("Rpc服务中心没有找到该方法！");
-                });
+                var contract = (from t in interfaces where t.GetInterface("RpcApi") != null select t.FullName).FirstOrDefault();
+                if (contract != null)
+                {
+                    var obj = Activator.CreateInstance(type);
+                    MqRpcHelper.RegisterRpcServer(contract, (r) =>
+                    {
+                        var c = r.Content;
+                        MethodInfo m = type.GetMethod(c.Method);
+                        if (m != null)
+                            return m.Invoke(obj, c.Params);
+                        return DResult.Error("Rpc服务中心没有找到该方法！");
+                    });
 
-                Console.WriteLine($"【{plugin.Priority}】{plugin.Name}插件（{plugin.Id}）rpc注册成功!");
+                    Console.WriteLine($"【{plugin.Priority}】{plugin.Name}插件（{plugin.Id}）rpc注册成功!");
+                }
             }
             services.AddMvcCore().AddApplicationPart(type.Assembly);
             Console.WriteLine($"【{plugin.Priority}】{plugin.Name}插件（{plugin.Id}）加载成功!");

@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Logger.Manage.Plugin\Logger.Manage.Plugin.csproj" />
+    <ProjectReference Include="..\RabbitMq.Manage.Plugin\RabbitMq.Manage.Plugin.csproj" />
   </ItemGroup>
 
 </Project>

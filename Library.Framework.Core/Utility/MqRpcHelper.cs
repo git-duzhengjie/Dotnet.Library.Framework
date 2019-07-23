@@ -10,11 +10,10 @@ namespace Library.Framework.Core.Utility
     public class MqRpcHelper
     {
         public delegate object Process(RpcDto message);
-        public static RabbitMqHelper rabbitMqHelper= new RabbitMqHelper("amqp://192.168.137.2:5672/", "guest", "guest", 2);
         public MqRpcHelper(ServerConfiguration serverConfiguration)
         {
             //测试
-            rabbitMqHelper = new RabbitMqHelper("amqp://192.168.137.2:5672/", "guest", "guest", 2);
+            //rabbitMqHelper = new RabbitMqHelper("amqp://192.168.137.2:5672/", "guest", "guest");
             //正式
             //rabbitMqHelper = new RabbitMqHelper(serverConfiguration.Host + ":" + serverConfiguration.Port, serverConfiguration.User, serverConfiguration.Password, serverConfiguration.Model);
         }
@@ -69,6 +68,7 @@ namespace Library.Framework.Core.Utility
 
         public static object ReadMessageViaRpc(string contract, string method, object[] objects)
         {
+            var rabbitMqHelper = SingletonUtility.GetSingleton<RabbitMqHelper>();
             var id = IdentityHelper.NewSequentialGuid().ToString("N");
             var s = new RpcDto
             {
@@ -79,7 +79,7 @@ namespace Library.Framework.Core.Utility
                     Params = objects
                 }
             };
-            rabbitMqHelper.SendMessage($"server:{contract}", "", "", s.ObjectToBytes());
+            rabbitMqHelper.SendMessage($"server:{contract}", "", "", s.ObjectToBytes(), 2);
             object result = null;
             bool receive = false;
 
@@ -88,7 +88,7 @@ namespace Library.Framework.Core.Utility
                 result = ea.Body.BytesToObject();
                 receive = true;
                 rabbitMqHelper.DeleteQueue(id);
-            });
+            }, 2);
             var start = DateTime.Now.ToTimeStamp();
             while (!receive)
             {
@@ -100,13 +100,13 @@ namespace Library.Framework.Core.Utility
 
         public static void RegisterRpcServer(string name, Process process)
         {
-            //RabbitMqHelper rabbitMqHelper = new RabbitMqHelper("amqp://192.168.137.2:5672/", "guest", "guest", 2);
+            var rabbitMqHelper = SingletonUtility.GetSingleton<RabbitMqHelper>();
             rabbitMqHelper.ReadMessage($"server:{name}", (ob, ea) =>
             {
                 var r = ea.Body.BytesToObject<RpcDto>();
                 var s = process(r);
-                rabbitMqHelper.SendMessage(r.Id, "", "", s.ObjectToBytes());
-            });
+                rabbitMqHelper.SendMessage(r.Id, "", "", s.ObjectToBytes(), 2);
+            }, 2);
         }
 
     }
