@@ -10,6 +10,6 @@ namespace Library.Framework.Plugin
         /// <summary>
         /// 
         /// </summary>
-        DbConfig DbConfig { get; set; }
+        DatabaseConfiguration DbConfig { get; set; }
     }
 }

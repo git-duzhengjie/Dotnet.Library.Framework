@@ -11,7 +11,6 @@ using Library.Framework.Web.Model;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Library.Framework.Core.Aspnet;
 using Library.Framework.Core.Plugin;
-using Library.Framework.Core.Rpc;
 
 namespace Library.Framework.Web
 {
