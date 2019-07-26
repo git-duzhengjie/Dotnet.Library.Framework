@@ -109,7 +109,9 @@ namespace Library.Framework.Web
                 }
                 catch (Exception ex)
                 {
-
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("载入依赖库报错！",ex.ToString());
+                    Console.ResetColor();
                 }
             }
         }
