@@ -3,41 +3,39 @@ using Library.Framework.Core.Enum;
 using Library.Framework.Core.Model;
 using MySql.Data.MySqlClient;
 using Npgsql;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Library.Framework.Core.Utility
 {
     public class DapperHelper
     {
-        /// 数据库连接名
-        private static string _connection = string.Empty;
+        private static Dictionary<string, DapperHelper> _connPool=new Dictionary<string, DapperHelper>();
 
-        /// 获取连接名        
-        private static string Connection
-        {
-            get { return _connection; }
-        }
-
-        /// 返回连接实例        
-        private static IDbConnection dbConnection = null;
-
-        /// 静态变量保存类的实例        
-        private static DapperHelper uniqueInstance;
+        private IDbConnection _dbConnection = null;
 
         /// 定义一个标识确保线程同步        
         private static readonly object locker = new object();
-        /// <summary>
-        /// 私有构造方法，使外界不能创建该类的实例，以便实现单例模式
-        /// </summary>
-        private DapperHelper(DatabaseConfiguration config)
-        {
-            // 这里为了方便演示直接写的字符串，实例项目中可以将连接字符串放在配置文件中，再进行读取。
-            //_connection = $"server={config.Host};uid={config.User};pwd={config.Password};database={config.Database};port={config.Port}";
-            _connection = config.Connection;
+
+        public bool IsClosed() {
+            return _dbConnection.State==ConnectionState.Closed;
         }
+
+        public delegate void Process();
+
+        public DapperHelper(IDbConnection connection) {
+            _dbConnection = connection;
+        }
+
+        private IDbTransaction _transaction;
+        private bool _isBuffer=false;
+        private int? _timeOut = null;
+        
 
         /// <summary>
         /// 获取实例，这里为单例模式，保证只存在一个实例
@@ -45,129 +43,142 @@ namespace Library.Framework.Core.Utility
         /// <returns></returns>
         public static DapperHelper GetInstance(DatabaseConfiguration config)
         {
-            // 双重锁定实现单例模式，在外层加个判空条件主要是为了减少加锁、释放锁的不必要的损耗
-            if (uniqueInstance == null)
+            lock (locker)
             {
-                lock (locker)
+                var conn = config.Connection;
+                if (_connPool != null && _connPool.ContainsKey(conn))
                 {
-                    if (uniqueInstance == null)
+                    if (_connPool[conn].IsClosed())
+                        _connPool[conn].Open();
+                    return _connPool[conn];
+                }
+                else
+                {
+                    IDbConnection dbConnection=null;
+                    switch (config.DBtype)
                     {
-                        uniqueInstance = new DapperHelper(config);
+                        case DBType.SqlServer:
+                            dbConnection = new SqlConnection(config.Connection);
+                            break;
+                        case DBType.PgSql:
+                            dbConnection = new NpgsqlConnection(config.Connection);
+                            break;
+                        case DBType.MySql:
+                            dbConnection = new MySqlConnection(config.Connection);
+                            break;
                     }
+                    if (dbConnection != null)
+                    {
+                        var dapper = new DapperHelper(dbConnection);
+                        _connPool.Add(config.Connection, dapper);
+                        return dapper;
+                    }
+                    else
+                        throw new Exception("不存在的DBTYPE！");
                 }
             }
-            return uniqueInstance;
         }
 
+        public void SetBuffer(bool isBuffer) {
+            _isBuffer = isBuffer;
+        }
 
-        /// <summary>
-        /// 创建数据库连接对象并打开链接
-        /// </summary>
-        /// <returns></returns>
-        public static IDbConnection OpenCurrentDbConnection(DBType dBType)
+        public void SetTimeOut(int timeOut) {
+            _timeOut = timeOut;
+        }
+
+        private void Open()
         {
-            if (dbConnection == null)
-            {
-                switch (dBType)
-                {
-                    case DBType.SqlServer:
-                        dbConnection = new SqlConnection(Connection);
-                        break;
-                    case DBType.PgSql:
-                        dbConnection = new NpgsqlConnection(Connection);
-                        break;
-                    case DBType.MySql:
-                        dbConnection = new MySqlConnection(Connection);
-                        break;
-                }
-            }
-            //判断连接状态
-            if (dbConnection.State == ConnectionState.Closed)
-            {
-                dbConnection.Open();
-            }
-            return dbConnection;
+            _dbConnection.Open();
         }
+
+        public T QueryFirstOrDefault<T>(string sql, object param = null)
+        {
+            return _dbConnection.QueryFirstOrDefault<T>(sql, param,_transaction);
+        }
+
+
+        public Task<T> QueryFirstOrDefaultAsync<T>(string sql, object param = null)
+        {
+            return _dbConnection.QueryFirstOrDefaultAsync<T>(sql, param,_transaction);
+        }
+
+        public IEnumerable<T> Query<T>(string sql, object param = null)
+        {
+            return _dbConnection.Query<T>(sql, param, _transaction, _isBuffer, _timeOut, null);
+        }
+
+        public IPagedList<T> PagedQuery<T>(string sql, object param = null,int index=0,int size=0)
+        {
+            if (index == 0 && size == 0)
+                return new PagedList<T> { DataList = _dbConnection.Query<T>(sql, param, _transaction, _isBuffer, _timeOut, null).ToList() };
+            else {
+                int offset = (index - 1) * size;
+                var tmp=Regex.Split(sql, "\\s+").ToList();
+                var end = tmp.IndexOf("from");
+                var sqlCount = $"select count(*) from {string.Join(" ",tmp[end+1])}";
+                int total = QueryFirstOrDefault<int>(sqlCount,param);
+                sql += $" limit {size} offset {offset}";
+                var data = Query<T>(sql,param);
+                return new PagedList<T> {
+                    Index=index,
+                    Size=size,
+                    Pages=total/size,
+                    Total=total,
+                    DataList=data.ToList()
+                };
+            }
+        }
+
+        public Task<IEnumerable<T>> QueryAsync<T>(string sql, object param = null)
+        {
+            return _dbConnection.QueryAsync<T>(sql, param, _transaction, _timeOut, null);
+        }
+
+        public int Execute(string sql, object param = null)
+        {
+            return _dbConnection.Execute(sql, param, _transaction, _timeOut, null);
+        }
+
+        public Task<int> ExecuteAsync(string sql, object param = null)
+        {
+            return _dbConnection.ExecuteAsync(sql, param, _transaction, _timeOut, null);
+        }
+
+        public T ExecuteScalar<T>(string sql, object param = null)
+        {
+            return _dbConnection.ExecuteScalar<T>(sql, param, _transaction, _timeOut, null);
+        }
+
+
+        public Task<T> ExecuteScalarAsync<T>(string sql, object param = null)
+        {
+            return _dbConnection.ExecuteScalarAsync<T>(sql, param, _transaction, _timeOut, null);
+        }
+
+        public SqlMapper.GridReader QueryMultiple(string sql, object param = null)
+        {
+            return _dbConnection.QueryMultiple(sql, param, _transaction, _timeOut, null);
+        }
+
+        public Task<SqlMapper.GridReader> QueryMultipleAsync(string sql, object param = null)
+        {
+            return _dbConnection.QueryMultipleAsync(sql, param, _transaction, _timeOut, null);
+        }
+
+        public void ExcuteTransaction(Process t ) {
+            try
+            {
+                _transaction = _dbConnection.BeginTransaction();
+                t();
+                _transaction.Commit();
+            }
+            catch (Exception ex) {
+                _transaction.Rollback();
+                throw ex;
+            }
+        }
+
     }
      
-
-    public static class DbContext
-    {
-        public static DatabaseConfiguration _config;
-        // 获取开启数据库的连接
-        private static IDbConnection Db
-        {
-            get
-            {
-                //创建单一实例
-                DapperHelper.GetInstance(_config);
-                return DapperHelper.OpenCurrentDbConnection(_config.DBtype);
-            }
-        }
-
-        /// <summary>
-        /// 查出一条记录的实体
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="sql"></param>
-        /// <returns></returns>
-        public static T QueryFirstOrDefault<T>(string sql, object param = null)
-        {
-            return Db.QueryFirstOrDefault<T>(sql, param);
-        }
-
-        public static Task<T> QueryFirstOrDefaultAsync<T>(string sql, object param = null)
-        {
-            return Db.QueryFirstOrDefaultAsync<T>(sql, param);
-        }
-        /// <summary>
-        /// 查出多条记录的实体泛型集合
-        /// </summary>
-        /// <typeparam name="T">泛型T</typeparam>
-        /// <returns></returns>
-        public static IEnumerable<T> Query<T>(string sql, object param = null, IDbTransaction transaction = null, bool buffered = true, int? commandTimeout = null, CommandType? commandType = null)
-        {
-            return Db.Query<T>(sql, param, transaction, buffered, commandTimeout, commandType);
-        }
-
-        public static Task<IEnumerable<T>> QueryAsync<T>(string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null)
-        {
-            return Db.QueryAsync<T>(sql, param, transaction, commandTimeout, commandType);
-        }
-
-        public static int Execute(string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null)
-        {
-            return Db.Execute(sql, param, transaction, commandTimeout, commandType);
-        }
-
-        public static Task<int> ExecuteAsync(string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null)
-        {
-            return Db.ExecuteAsync(sql, param, transaction, commandTimeout, commandType);
-        }
-
-        public static T ExecuteScalar<T>(string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null)
-        {
-            return Db.ExecuteScalar<T>(sql, param, transaction, commandTimeout, commandType);
-        }
-
-        public static Task<T> ExecuteScalarAsync<T>(string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null)
-        {
-            return Db.ExecuteScalarAsync<T>(sql, param, transaction, commandTimeout, commandType);
-        }
-
-        /// <summary>
-        /// 同时查询多张表数据（高级查询）
-        /// "select *from K_City;select *from K_Area";
-        /// </summary>
-        /// <param name="sql"></param>
-        /// <returns></returns>
-        public static SqlMapper.GridReader QueryMultiple(string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null)
-        {
-            return Db.QueryMultiple(sql, param, transaction, commandTimeout, commandType);
-        }
-        public static Task<SqlMapper.GridReader> QueryMultipleAsync(string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null)
-        {
-            return Db.QueryMultipleAsync(sql, param, transaction, commandTimeout, commandType);
-        }
-    }
 }

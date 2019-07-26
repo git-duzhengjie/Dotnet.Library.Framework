@@ -18,14 +18,15 @@ namespace Library.Framework.Core.Utility
 
         public delegate void Process(object model, BasicDeliverEventArgs ea);
 
-        public RabbitMqHelper(string uri, string userName, string password)
+        public RabbitMqHelper(string uri, string userName, string password,string virtualHost)
         {
             IConnectionFactory connectionFactory = new ConnectionFactory
             {
                 RequestedHeartbeat = 0,
                 Endpoint = new AmqpTcpEndpoint(new Uri(uri)),
                 UserName = userName,
-                Password = password
+                Password = password,
+                VirtualHost=virtualHost
             };
             _con = connectionFactory.CreateConnection();
             _ch = _con.CreateModel();

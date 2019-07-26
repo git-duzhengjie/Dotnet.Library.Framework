@@ -16,5 +16,10 @@
         /// 
         /// </summary>
         public string Password { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Vhost { get; set; }
     }
 }

@@ -39,7 +39,7 @@ namespace RabbitMq.Manage.Plugin
             else {
                 cg = config.DeserializeJson<Configuration>();
             }
-            var rabbitMqHelper = new RabbitMqHelper(cg.ConnectString, cg.User, cg.Password);
+            var rabbitMqHelper = new RabbitMqHelper(cg.ConnectString, cg.User, cg.Password,cg.Vhost);
             SingletonUtility.AddSingleton(rabbitMqHelper);
         }
     }
