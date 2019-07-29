@@ -26,12 +26,10 @@
     <None Update="Lib\Test.Contract.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Plugins\Library.Framework.Plugin.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Plugins\" />
     <Folder Include="Properties\" />
   </ItemGroup>
 
