@@ -30,6 +30,8 @@ namespace Library.Framework.Plugin
         /// </summary>
         public override string Id => "B95B6E07-EE83-4458-83CA-0843D3F0C7E9";
 
+        public Configuration _config;
+
         /// <summary>
         /// 
         /// </summary>
@@ -37,6 +39,7 @@ namespace Library.Framework.Plugin
         {
             base.Config();
             var config = ConfigurationManage.GetConfiguration(Id).DeserializeJson<Configuration>();
+            _config = config;
         }
         /// <summary>
         /// 测试
