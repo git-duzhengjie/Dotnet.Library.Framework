@@ -43,7 +43,7 @@ namespace Library.Framework.Core.Aspnet
             }
         }
 
-        protected virtual void Config() {
+        public virtual void Config() {
             var config = ConfigurationManage.GetConfiguration($"configuration:6D5AD3FC-EB8E-403E-8C2A-426E87FA7CFA");
             if (config == null)
             {
