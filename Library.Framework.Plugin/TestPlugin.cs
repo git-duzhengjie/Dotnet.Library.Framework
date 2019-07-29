@@ -35,7 +35,7 @@ namespace Library.Framework.Plugin
         /// <summary>
         /// 
         /// </summary>
-        protected override void Config()
+        public override void Config()
         {
             base.Config();
             var config = ConfigurationManage.GetConfiguration(Id).DeserializeJson<Configuration>();
